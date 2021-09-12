@@ -1,4 +1,19 @@
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
-}
+//#######################################
+//## CORE ###############################
+//#######################################
+@import "styles/base/reset";
+@import "styles/base/html";
+@import "styles/utilities/colors";
+
+//#######################################
+//## LAYOUT #########################
+//#######################################
+@import "styles/layout/grid";
+@import "styles/layout/header";
+@import "styles/layout/sidebar";
+@import "styles/layout/main-content";
+
+//#######################################
+//## COMPONENTS #########################
+//#######################################
+@import "styles/components/project";

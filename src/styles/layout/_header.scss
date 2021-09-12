@@ -1,0 +1,40 @@
+.header {
+    height: 70px;
+    width: 100%;
+    background-color: $white;
+    border: 1px solid $gray-100;
+    border-top: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &__item1 {
+        width: 155px;
+        height: 40px;
+        border-radius: 97px;
+        background-color: $gray-100;
+        margin-left: 30px;
+    }
+
+    &__item2 {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: $gray-100;
+    }
+
+    &__item3 {
+        width: 137px;
+        height: 40px;
+        border-radius: 97px;
+        background-color: $gray-100;
+        margin-left: 20px;
+        margin-right: 30px;
+    }
+
+    &__right-items {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
