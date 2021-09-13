@@ -1,3 +1,70 @@
 {
-    "name": "I love cookies!"
+    "folders": [
+        {
+            "id": 111,
+            "order": 1,
+            "name": "Folder 1",
+            "projects": [
+                {
+                    "id": 111,
+                    "order": 1,
+                    "name": "1"
+                },
+                {
+                    "id": 222,
+                    "order": 2,
+                    "name": "2"
+                }
+            ]
+        },
+        {
+            "id": 222,
+            "order": 2,
+            "name": "Folder 2",
+            "projects": [
+                {
+                    "id": 333,
+                    "order": 3,
+                    "name": "3"
+                },
+                {
+                    "id": 444,
+                    "order": 4,
+                    "name": "4"
+                }
+            ]
+        },
+        {
+            "id": 333,
+            "order": 3,
+            "name": "Folder 3",
+            "projects": [
+                {
+                    "id": 555,
+                    "order": 5,
+                    "name": "5"
+                },
+                {
+                    "id": 666,
+                    "order": 6,
+                    "name": "6"
+                },
+                {
+                    "id": 777,
+                    "order": 7,
+                    "name": "7"
+                },
+                {
+                    "id": 888,
+                    "order": 8,
+                    "name": "8"
+                },
+                {
+                    "id": 999,
+                    "order": 9,
+                    "name": "9"
+                }
+            ]
+        }
+    ]
 }
