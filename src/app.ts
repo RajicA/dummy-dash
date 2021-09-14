@@ -6,6 +6,8 @@ import { Folder } from './models/folder.model';
 import { UtilsService } from './services/utils.service';
 import { DragAndDropService } from './services/drag-and-drop.service';
 import { Project } from './models/project.model';
+import { Events } from './constants/events.enum';
+import { LocalStorageService } from './services/local-storage.service';
 export class DummyDashboard {
 
   projectSelector = '.project';
@@ -20,10 +22,27 @@ export class DummyDashboard {
   utilsService: UtilsService = new UtilsService();
   layoutService: LayoutService = new LayoutService();
   dragAndDropService: DragAndDropService = new DragAndDropService();
+  localStorageService: LocalStorageService = new LocalStorageService();
 
   constructor() {
+    this.getData();
+    this.getActiveFolderId();
     this.renderInitialView();
     this.watchForChanges();
+  }
+
+  getData(): void {
+    const data: DataType = this.localStorageService.getData();
+    if (data) {
+      this.data = data;
+    }
+  }
+
+  getActiveFolderId(): void {
+    const activeFolderId: string = this.localStorageService.getActiveFolderId();
+    if (activeFolderId) {
+      this.activeFolderId = activeFolderId;
+    }
   }
 
   renderInitialView(): void {
@@ -40,7 +59,7 @@ export class DummyDashboard {
   }
 
   onFolderChanged(): void {
-    document.addEventListener('DD_FOLDER_CHANGED', (e: CustomEvent) => {
+    document.addEventListener(Events.DD_FOLDER_CHANGED, (e: CustomEvent) => {
       const { folderEl } = e.detail;
       this.selectFolder(folderEl, true);
     });
@@ -61,10 +80,20 @@ export class DummyDashboard {
     }
     projects = this.utilsService.sortProjects(projects);
     this.createProjects(projects);
+
+    const messageEl: HTMLElement = document.getElementById('empty-message');
+
+    if (!projects.length) {
+      messageEl.style.display = 'block';
+    } else {
+      messageEl.style.display = 'none';
+    }
+
+    this.localStorageService.setActiveFolderId(this.activeFolderId);
   }
 
   onProjectSelected(): void {
-    document.addEventListener('DD_PROJECT_SELECTED', (e: CustomEvent) => {
+    document.addEventListener(Events.DD_PROJECT_SELECTED, (e: CustomEvent) => {
       const { projectEl } = e.detail;
       if (!this.selectedProjectsIds.includes(projectEl.id)) {
         this.selectedProjectsIds.push(projectEl.id);
@@ -77,8 +106,12 @@ export class DummyDashboard {
   }
 
   onDrop(): void {
-    document.addEventListener('DD_DROP', (e: CustomEvent) => {
+    document.addEventListener(Events.DD_DROP, (e: CustomEvent) => {
       const { folderEl } = e.detail;
+
+      if (folderEl.id === this.activeFolderId) {
+        return;
+      }
 
       const { current, target } = this.utilsService.getCurrentAndTarget(
         this.data,
@@ -92,18 +125,37 @@ export class DummyDashboard {
 
       this.layoutService.removeDroppedProjects(this.selectedProjectsIds);
       this.selectedProjectsIds = [];
+
+      this.selectFolder(folderEl);
+      this.localStorageService.setData(this.data);
     });
   }
 
   onDrag(): void {
-    document.addEventListener('DD_DRAG', (e: CustomEvent) => {
+    document.addEventListener(Events.DD_DRAG, (e: CustomEvent) => {
       const ghostDragEl = this.layoutService.createGhostDragEl(this.selectedProjectsIds);
       e.detail.srcEv.dataTransfer.setDragImage(ghostDragEl, 10, 80);
+      const ele = document.querySelector('body') as HTMLElement;
+      ele.style.overflow = 'hidden';
     });
   }
 
   createProjects(projects: Project[]): void {
     this.layoutService.createProjects(projects);
+    if (this.activeFolderId === 'allFolders') {
+
+      document.querySelectorAll('.project').forEach((project: HTMLElement) => {
+        const checkbox: HTMLInputElement = project.querySelector('input');
+        const circle: HTMLElement = project.querySelector('.circle');
+        const label: HTMLElement = project.querySelector('label');
+        checkbox.disabled = true;
+        circle.style.display = 'none';
+        label.style.cursor = 'default';
+      });
+
+      return;
+    }
+
     this.layoutService.addProjectsEventListeners(this.checkboxLabelSelector);
     this.dragAndDropService.addDragAndDropEventListeners(this.folderSelector, this.projectSelector);
     this.selectedProjectsIds = [];

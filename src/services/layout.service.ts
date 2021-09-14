@@ -1,3 +1,4 @@
+import { Events } from '../constants/events.enum';
 import { Folder } from '../models/folder.model';
 import { Project } from '../models/project.model';
 import { UtilsService } from './utils.service';
@@ -21,7 +22,7 @@ export class LayoutService {
 
     folders.forEach((folder: Folder) => {
       const folderEl = document.createElement('div');
-      folderEl.id = `folder${folder.order}`;
+      folderEl.id = this.utilsService.folderIdSel(folder);
       folderEl.classList.add('folder');
       folderEl.innerText = folder.name;
       sideBarEl.appendChild(folderEl);
@@ -30,14 +31,14 @@ export class LayoutService {
 
   createProjects(projects: Project[]): void {
     const gridEl = document.getElementsByClassName('grid')[0];
-    gridEl.innerHTML = '';
+    gridEl.querySelectorAll('.grid__item').forEach((gridItem: HTMLElement) => gridItem.remove());
 
     projects.forEach((project: Project) => {
       const gridItemEl = document.createElement('div');
       gridItemEl.classList.add('grid__item');
 
       const projectEl = document.createElement('div');
-      projectEl.id = `project${project.order}`;
+      projectEl.id = this.utilsService.projectIdSel(project);
       projectEl.classList.add('project');
 
       const inputEl = document.createElement('input');
@@ -105,13 +106,13 @@ export class LayoutService {
 
   handleFolderClick(ev: MouseEvent): void {
     const el = ev.target as HTMLElement;
-    document.dispatchEvent(new CustomEvent('DD_FOLDER_CHANGED', { detail: { folderEl: el } }));
+    document.dispatchEvent(new CustomEvent(Events.DD_FOLDER_CHANGED, { detail: { folderEl: el } }));
   }
 
   handleProjectClick(ev: MouseEvent): void {
     const el = ev.target as HTMLElement;
     const projectEl: HTMLElement = el.closest(this.projectSelector);
-    document.dispatchEvent(new CustomEvent('DD_PROJECT_SELECTED', { detail: { projectEl } }));
+    document.dispatchEvent(new CustomEvent(Events.DD_PROJECT_SELECTED, { detail: { projectEl } }));
   }
 
   addFoldersEventListeners(folderSelector: string): void {

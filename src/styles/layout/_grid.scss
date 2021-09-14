@@ -4,6 +4,9 @@
     flex-wrap: wrap;
     padding: 10px 25px;
     width: 100%;
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+    align-content: flex-start;
     
     &__item {
         width: calc(100% / 3);

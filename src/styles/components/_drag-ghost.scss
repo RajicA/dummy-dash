@@ -1,0 +1,35 @@
+.drag-image {
+    width: 162px; 
+    height: 102px;
+
+    div {
+        width: 162px; 
+        height: 102px;
+        position: absolute;
+        border-radius: 5.4px;
+        border: 1px solid $purple;
+        background-color: rgba($color: $gray-50, $alpha: 0.4);
+        &:not(:last-child) {
+            border-left-width: 0;
+            border-top-width: 0;
+        }
+    }
+
+    &__number {
+        width: 30px;
+        height: 30px;
+        display: block;
+        background-color: $purple;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: $white;
+        font-size: 12px;
+
+        margin-bottom: -20px;
+        z-index: 1;
+        position: relative;
+        margin-left: -7px;
+    }
+}

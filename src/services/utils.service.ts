@@ -13,7 +13,7 @@ export class UtilsService {
   }
 
   getFolderDataByIdSelector(folders: Folder[], id: string): Folder {
-    return folders.find((folder: Folder) => `folder${folder.order}` === id);
+    return folders.find((folder: Folder) => this.folderIdSel(folder) === id);
   }
 
   getAllProjects(folders: Folder[]): Project[] {
@@ -33,14 +33,14 @@ export class UtilsService {
     const currentFolder: Folder = this.getFolderDataByIdSelector(data.folders, activeFolderId);
 
     const selectedProjects: Project[] = currentFolder.projects.filter((project: Project) => {
-      return selectedProjectsIds.includes(`project${project.order}`);
+      return selectedProjectsIds.includes(this.projectIdSel(project));
     });
 
     const targetFolder: Folder = this.getFolderDataByIdSelector(data.folders, targetFolderId);
     targetFolder.projects = targetFolder.projects.concat(selectedProjects);
 
     currentFolder.projects = currentFolder.projects.filter((project: Project) => {
-      return !selectedProjectsIds.includes(`project${project.order}`);
+      return !selectedProjectsIds.includes(this.projectIdSel(project));
     });
 
     const cIndex: number = data.folders.findIndex((folder: Folder) => folder.id === currentFolder.id);
@@ -56,5 +56,13 @@ export class UtilsService {
         projects: targetFolder.projects,
       }
     };
+  }
+
+  folderIdSel(folder: Folder): string {
+    return `folder${folder.order}`;
+  }
+
+  projectIdSel(project: Project): string {
+    return `project${project.order}`;
   }
 }

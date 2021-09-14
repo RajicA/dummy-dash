@@ -13,4 +13,13 @@
     &--active {
         background-color: $gray-50;
     }
+
+    &:hover {
+        background-color: $gray-50;
+    }
+}
+
+.folder.over {
+    background-color: $purple;
+    color: $white;
 }
