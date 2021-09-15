@@ -8,12 +8,20 @@
                 {
                     "id": 111,
                     "order": 1,
-                    "name": "1"
+                    "name": "1",
+                    "image": {
+                        "imgUrl": "assets/glasses_image.png",
+                        "depthUrl": "assets/glasses_image_depth.png"
+                    }
                 },
                 {
                     "id": 222,
                     "order": 2,
-                    "name": "2"
+                    "name": "2",
+                    "image": {
+                        "imgUrl": "assets/sneaker_image.png",
+                        "depthUrl": "assets/sneaker_image_depth.png"
+                    }
                 }
             ]
         },
@@ -30,7 +38,11 @@
                 {
                     "id": 444,
                     "order": 4,
-                    "name": "4"
+                    "name": "4",
+                    "image": {
+                        "imgUrl": "assets/pikachu.jpeg",
+                        "depthUrl": "assets/pikachu.map.jpg"
+                    }
                 }
             ]
         },

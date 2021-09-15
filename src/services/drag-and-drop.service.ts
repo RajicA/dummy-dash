@@ -1,4 +1,7 @@
 import { Events } from '../constants/events.enum';
+import {
+  ALL_PROJECTS_FOLDER_ID,
+} from '../constants/selectors.const';
 import { LayoutService } from './layout.service';
 
 export class DragAndDropService {
@@ -43,7 +46,7 @@ export class DragAndDropService {
     });
 
     folders.forEach((folder: HTMLElement) => {
-      if (folder.id !== 'allFolders') {
+      if (folder.id !== ALL_PROJECTS_FOLDER_ID) {
         folder.addEventListener('dragenter', this.handleDragEnter.bind(this), false);
         folder.addEventListener('dragover', this.handleDragOver.bind(this), false);
         folder.addEventListener('dragleave', this.handleDragLeave.bind(this), false);

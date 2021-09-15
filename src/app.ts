@@ -1,20 +1,23 @@
 import './styles.scss';
+
 import Data from './assets/data.json';
 import { LayoutService } from './services/layout.service';
 import { Data as DataType } from './models/data.model';
-import { Folder } from './models/folder.model';
 import { UtilsService } from './services/utils.service';
 import { DragAndDropService } from './services/drag-and-drop.service';
 import { Project } from './models/project.model';
 import { Events } from './constants/events.enum';
 import { LocalStorageService } from './services/local-storage.service';
+import {
+  ALL_PROJECTS_FOLDER_ID,
+  CHECKBOX_LABEL_SELECTOR,
+  FOLDER_SELECTOR,
+  PROJECT_SELECTOR,
+} from './constants/selectors.const';
+
 export class DummyDashboard {
 
-  projectSelector = '.project';
-  folderSelector = '.folder';
-  checkboxLabelSelector = '.project label';
-
-  activeFolderId = 'allFolders';
+  activeFolderId = ALL_PROJECTS_FOLDER_ID;
 
   data: DataType = Data;
   selectedProjectsIds: string[] = [];
@@ -47,7 +50,7 @@ export class DummyDashboard {
 
   renderInitialView(): void {
     this.layoutService.createFolders(this.data.folders);
-    this.layoutService.addFoldersEventListeners(this.folderSelector);
+    this.layoutService.addFoldersEventListeners(FOLDER_SELECTOR);
     this.selectFolder(document.getElementById(this.activeFolderId));
   }
 
@@ -69,26 +72,14 @@ export class DummyDashboard {
     if (folderEl.id === this.activeFolderId && clicked) {
       return;
     }
+
     this.activeFolderId = folderEl.id;
     this.layoutService.setActiveFolderClass(folderEl);
-    let projects: Project[] = [];
-    if (folderEl.id === 'allFolders') {
-      projects = this.utilsService.getAllProjects(this.data.folders);
-    } else {
-      const folder: Folder = this.utilsService.getFolderDataByIdSelector(this.data.folders, folderEl.id);
-      projects = folder.projects;
-    }
-    projects = this.utilsService.sortProjects(projects);
+
+    const projects: Project[] = this.utilsService.getProjects(folderEl.id, this.data.folders);
     this.createProjects(projects);
 
-    const messageEl: HTMLElement = document.getElementById('empty-message');
-
-    if (!projects.length) {
-      messageEl.style.display = 'block';
-    } else {
-      messageEl.style.display = 'none';
-    }
-
+    this.layoutService.checkIfFolderIsEmpty(projects);
     this.localStorageService.setActiveFolderId(this.activeFolderId);
   }
 
@@ -142,25 +133,16 @@ export class DummyDashboard {
 
   createProjects(projects: Project[]): void {
     this.layoutService.createProjects(projects);
-    if (this.activeFolderId === 'allFolders') {
 
-      document.querySelectorAll('.project').forEach((project: HTMLElement) => {
-        const checkbox: HTMLInputElement = project.querySelector('input');
-        const circle: HTMLElement = project.querySelector('.circle');
-        const label: HTMLElement = project.querySelector('label');
-        checkbox.disabled = true;
-        circle.style.display = 'none';
-        label.style.cursor = 'default';
-      });
-
+    if (this.activeFolderId === ALL_PROJECTS_FOLDER_ID) {
+      this.layoutService.generatePreview();
       return;
     }
 
-    this.layoutService.addProjectsEventListeners(this.checkboxLabelSelector);
-    this.dragAndDropService.addDragAndDropEventListeners(this.folderSelector, this.projectSelector);
+    this.layoutService.addProjectsEventListeners(CHECKBOX_LABEL_SELECTOR);
+    this.dragAndDropService.addDragAndDropEventListeners(FOLDER_SELECTOR, PROJECT_SELECTOR);
     this.selectedProjectsIds = [];
   }
-
 }
 
 const dummyDashboard = new DummyDashboard();

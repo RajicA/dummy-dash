@@ -1,0 +1,13 @@
+const PROJECT_SELECTOR = '.project';
+const FOLDER_SELECTOR = '.folder';
+const CHECKBOX_LABEL_SELECTOR = '.project label';
+const ALL_PROJECTS_FOLDER_ID = 'allProjects';
+
+export {
+  PROJECT_SELECTOR,
+  FOLDER_SELECTOR,
+  CHECKBOX_LABEL_SELECTOR,
+  ALL_PROJECTS_FOLDER_ID,
+};
+
+

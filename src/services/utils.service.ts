@@ -1,6 +1,9 @@
 import { Data } from '../models/data.model';
 import { Folder } from '../models/folder.model';
 import { Project } from '../models/project.model';
+import {
+  ALL_PROJECTS_FOLDER_ID,
+} from '../constants/selectors.const';
 
 export class UtilsService {
 
@@ -20,6 +23,7 @@ export class UtilsService {
     return folders.map((folder: Folder) => folder.projects).flat();
   }
 
+  // This method is used to retreive current/target folder projects/indexes on drag&drop action
   getCurrentAndTarget(data: Data, activeFolderId: string, targetFolderId: string, selectedProjectsIds: string[]): {
     current: {
       index: number;
@@ -65,4 +69,13 @@ export class UtilsService {
   projectIdSel(project: Project): string {
     return `project${project.order}`;
   }
+
+  getProjects(folderElId: string, folders: Folder[]): Project[] {
+    if (folderElId === ALL_PROJECTS_FOLDER_ID) {
+      return this.sortProjects(this.getAllProjects(folders));
+    }
+    return this.sortProjects(this.getFolderDataByIdSelector(folders, folderElId).projects);
+  }
 }
+
+
