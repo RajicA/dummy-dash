@@ -6,6 +6,11 @@ import { UtilsService } from './utils.service';
 import {
   PROJECT_SELECTOR,
 } from '../constants/selectors.const';
+
+import { ProjectComponent } from '../components/project.component';
+import { FolderComponent } from '../components/folder.component';
+import { GridItemComponent } from '../components/grid-item.component';
+
 export class LayoutService {
 
   utilsService = new UtilsService();
@@ -19,10 +24,12 @@ export class LayoutService {
     const sideBarEl = document.getElementsByClassName('sidebar')[0];
 
     folders.forEach((folder: Folder) => {
-      const folderEl = document.createElement('div');
-      folderEl.id = this.utilsService.folderIdSel(folder);
-      folderEl.classList.add('folder');
-      folderEl.innerText = folder.name;
+
+      const folderEl = new FolderComponent({
+        id: this.utilsService.folderIdSel(folder),
+        name: folder.name,
+      }).element;
+
       sideBarEl.appendChild(folderEl);
     });
   }
@@ -32,31 +39,13 @@ export class LayoutService {
     gridEl.querySelectorAll('.grid__item').forEach((gridItem: HTMLElement) => gridItem.remove());
 
     projects.forEach((project: Project) => {
-      const gridItemEl = document.createElement('div');
-      gridItemEl.classList.add('grid__item');
+      const gridItemEl = new GridItemComponent().element;
 
-      const projectEl = document.createElement('div');
-      projectEl.id = this.utilsService.projectIdSel(project);
-      projectEl.classList.add('project');
-
-      const inputEl = document.createElement('input');
-      inputEl.id = project.order.toString();
-      inputEl.type = 'checkbox';
-
-      const labelEl = document.createElement('label');
-      labelEl.setAttribute('for', inputEl.id);
-
-      const circleEl = document.createElement('span');
-      circleEl.classList.add('circle');
-
-      const numberEl = document.createElement('span');
-      numberEl.classList.add('number');
-      numberEl.innerText = project.name;
-
-      projectEl.appendChild(inputEl);
-      projectEl.appendChild(labelEl);
-      projectEl.appendChild(circleEl);
-      projectEl.appendChild(numberEl);
+      const projectEl = new ProjectComponent({
+        id: this.utilsService.projectIdSel(project),
+        order: project.order,
+        name: project.name,
+      }).element;
 
       gridItemEl.appendChild(projectEl);
       gridEl.appendChild(gridItemEl);
@@ -119,7 +108,6 @@ export class LayoutService {
 
   addFoldersEventListeners(folderSelector: string): void {
     const folders = document.querySelectorAll(folderSelector);
-
     folders.forEach((folder: HTMLElement) => {
       folder.addEventListener('click', this.handleFolderClick.bind(this), false);
     });
@@ -127,7 +115,6 @@ export class LayoutService {
 
   addProjectsEventListeners(checkboxLabelSelector: string): void {
     const checkboxLabels = document.querySelectorAll(checkboxLabelSelector);
-
     checkboxLabels.forEach((label: HTMLElement) => {
       label.addEventListener('click', this.handleProjectClick.bind(this), false);
     });
