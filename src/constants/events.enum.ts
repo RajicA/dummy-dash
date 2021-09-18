@@ -3,4 +3,5 @@ export enum Events {
   'DD_PROJECT_SELECTED' = 'DD_PROJECT_SELECTED',
   'DD_DRAG' = 'DD_DRAG',
   'DD_DROP' = 'DD_DROP',
+  'DD_DRAG_END' = 'DD_DRAG_END',
 }

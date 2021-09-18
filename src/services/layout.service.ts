@@ -1,15 +1,13 @@
-import { Events } from '../constants/events.enum';
 import { Folder } from '../models/folder.model';
 import { Project } from '../models/project.model';
 import { DepthMapService } from './depth-map.service';
 import { UtilsService } from './utils.service';
-import {
-  PROJECT_SELECTOR,
-} from '../constants/selectors.const';
 
 import { ProjectComponent } from '../components/project.component';
 import { FolderComponent } from '../components/folder.component';
 import { GridItemComponent } from '../components/grid-item.component';
+import { ALL_PROJECTS_FOLDER_ID } from '../constants/selectors.const';
+import { AllProjectsFolderComponent } from '../components/all-projects-folder.component';
 
 export class LayoutService {
 
@@ -19,9 +17,16 @@ export class LayoutService {
   constructor() { }
 
   createFolders(folders: Folder[]): void {
-    folders = this.utilsService.sortFolders(folders);
-
     const sideBarEl = document.getElementsByClassName('sidebar')[0];
+
+    const allProjectsFolderEl = new AllProjectsFolderComponent({
+      id: ALL_PROJECTS_FOLDER_ID,
+      name: 'All projects',
+    }).element;
+
+    sideBarEl.appendChild(allProjectsFolderEl);
+
+    folders = this.utilsService.sortFolders(folders);
 
     folders.forEach((folder: Folder) => {
 
@@ -34,7 +39,7 @@ export class LayoutService {
     });
   }
 
-  createProjects(projects: Project[]): void {
+  createProjects(projects: Project[], previewMode = false): void {
     const gridEl = document.getElementsByClassName('grid')[0];
     gridEl.querySelectorAll('.grid__item').forEach((gridItem: HTMLElement) => gridItem.remove());
 
@@ -45,6 +50,7 @@ export class LayoutService {
         id: this.utilsService.projectIdSel(project),
         order: project.order,
         name: project.name,
+        previewMode,
       }).element;
 
       gridItemEl.appendChild(projectEl);
@@ -95,31 +101,6 @@ export class LayoutService {
     });
   }
 
-  handleFolderClick(ev: MouseEvent): void {
-    const el = ev.target as HTMLElement;
-    document.dispatchEvent(new CustomEvent(Events.DD_FOLDER_CHANGED, { detail: { folderEl: el } }));
-  }
-
-  handleProjectClick(ev: MouseEvent): void {
-    const el = ev.target as HTMLElement;
-    const projectEl: HTMLElement = el.closest(PROJECT_SELECTOR);
-    document.dispatchEvent(new CustomEvent(Events.DD_PROJECT_SELECTED, { detail: { projectEl } }));
-  }
-
-  addFoldersEventListeners(folderSelector: string): void {
-    const folders = document.querySelectorAll(folderSelector);
-    folders.forEach((folder: HTMLElement) => {
-      folder.addEventListener('click', this.handleFolderClick.bind(this), false);
-    });
-  }
-
-  addProjectsEventListeners(checkboxLabelSelector: string): void {
-    const checkboxLabels = document.querySelectorAll(checkboxLabelSelector);
-    checkboxLabels.forEach((label: HTMLElement) => {
-      label.addEventListener('click', this.handleProjectClick.bind(this), false);
-    });
-  }
-
   setActiveFolderClass(folderEl: HTMLElement): void {
     const folders = document.querySelectorAll('.folder');
     folders.forEach((folder: HTMLElement) => folder.classList.remove('folder--active'));
@@ -133,16 +114,5 @@ export class LayoutService {
     } else {
       messageEl.style.display = 'none';
     }
-  }
-
-  generatePreview(): void {
-    document.querySelectorAll('.project').forEach((project: HTMLElement) => {
-      const checkbox: HTMLInputElement = project.querySelector('input');
-      const circle: HTMLElement = project.querySelector('.circle');
-      const label: HTMLElement = project.querySelector('label');
-      checkbox.disabled = true;
-      circle.style.display = 'none';
-      label.style.cursor = 'default';
-    });
   }
 }

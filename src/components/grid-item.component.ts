@@ -1,12 +1,12 @@
 import { BaseComponent } from './base.component';
 
-export class GridItemComponent extends BaseComponent<unknown> {
+export class GridItemComponent extends BaseComponent {
 
   constructor() {
     super();
 
-    this.template(`
-      <div class="grid__item"><div>
-    `);
+    this.template = `
+      <section class="grid__item"><section>
+    `;
   }
 }

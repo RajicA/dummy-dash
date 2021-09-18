@@ -4,15 +4,11 @@ import Data from './assets/data.json';
 import { LayoutService } from './services/layout.service';
 import { Data as DataType } from './models/data.model';
 import { UtilsService } from './services/utils.service';
-import { DragAndDropService } from './services/drag-and-drop.service';
 import { Project } from './models/project.model';
 import { Events } from './constants/events.enum';
 import { LocalStorageService } from './services/local-storage.service';
 import {
   ALL_PROJECTS_FOLDER_ID,
-  CHECKBOX_LABEL_SELECTOR,
-  FOLDER_SELECTOR,
-  PROJECT_SELECTOR,
 } from './constants/selectors.const';
 
 export class DummyDashboard {
@@ -24,7 +20,6 @@ export class DummyDashboard {
 
   utilsService: UtilsService = new UtilsService();
   layoutService: LayoutService = new LayoutService();
-  dragAndDropService: DragAndDropService = new DragAndDropService();
   localStorageService: LocalStorageService = new LocalStorageService();
 
   constructor() {
@@ -50,7 +45,6 @@ export class DummyDashboard {
 
   renderInitialView(): void {
     this.layoutService.createFolders(this.data.folders);
-    this.layoutService.addFoldersEventListeners(FOLDER_SELECTOR);
     this.selectFolder(document.getElementById(this.activeFolderId));
   }
 
@@ -58,13 +52,14 @@ export class DummyDashboard {
     this.onFolderChanged();
     this.onProjectSelected();
     this.onDrag();
+    this.onDragEnd();
     this.onDrop();
   }
 
   onFolderChanged(): void {
     document.addEventListener(Events.DD_FOLDER_CHANGED, (e: CustomEvent) => {
-      const { folderEl } = e.detail;
-      this.selectFolder(folderEl, true);
+      const { element } = e.detail;
+      this.selectFolder(element, true);
     });
   }
 
@@ -85,13 +80,13 @@ export class DummyDashboard {
 
   onProjectSelected(): void {
     document.addEventListener(Events.DD_PROJECT_SELECTED, (e: CustomEvent) => {
-      const { projectEl } = e.detail;
-      if (!this.selectedProjectsIds.includes(projectEl.id)) {
-        this.selectedProjectsIds.push(projectEl.id);
-        projectEl.setAttribute('draggable', 'true');
+      const { element } = e.detail;
+      if (!this.selectedProjectsIds.includes(element.id)) {
+        this.selectedProjectsIds.push(element.id);
+        element.setAttribute('draggable', 'true');
       } else {
-        this.selectedProjectsIds = this.selectedProjectsIds.filter((id: string) => id !== projectEl.id);
-        projectEl.removeAttribute('draggable');
+        this.selectedProjectsIds = this.selectedProjectsIds.filter((id: string) => id !== element.id);
+        element.removeAttribute('draggable');
       }
     });
   }
@@ -131,16 +126,18 @@ export class DummyDashboard {
     });
   }
 
+  onDragEnd(): void {
+    document.addEventListener(Events.DD_DRAG_END, () => {
+      this.layoutService.removeGhostDragEl();
+    });
+  }
+
   createProjects(projects: Project[]): void {
-    this.layoutService.createProjects(projects);
-
     if (this.activeFolderId === ALL_PROJECTS_FOLDER_ID) {
-      this.layoutService.generatePreview();
-      return;
+      this.layoutService.createProjects(projects, true);
+    } else {
+      this.layoutService.createProjects(projects);
     }
-
-    this.layoutService.addProjectsEventListeners(CHECKBOX_LABEL_SELECTOR);
-    this.dragAndDropService.addDragAndDropEventListeners(FOLDER_SELECTOR, PROJECT_SELECTOR);
     this.selectedProjectsIds = [];
   }
 }
